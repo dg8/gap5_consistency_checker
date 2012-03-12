@@ -1,0 +1,49 @@
+#!/bin/sh
+
+STADENROOT=/software/badger/opt/gap5_test;    export STADENROOT
+STADTABL=$STADENROOT/share/staden/etc;        export STADTABL
+STADLIB=$STADENROOT/lib/staden; 	      export STADLIB
+STADTCL=$STADENROOT/share/staden/tcl;         export STADTCL
+LD_LIBRARY_PATH=$STADLIB:$LD_LIBRARY_PATH;    export LD_LIBRARY_PATH
+
+tclsh - ${@+"$@"} << '__eof'
+# Tcl part starts here
+
+# Startup code - load Gap5 tcl components
+source $env(STADTABL)/shlib.conf
+load $env(STADLIB)/${lib_prefix}tk_utils${lib_suffix}
+load_package tk_utils
+tk_utils_init
+load_package gap5
+
+# Open the database
+set db [lindex $argv 1]
+if {[catch {set io [g5::open_database -name $db -access ro]} err]} {
+    puts stderr "Couldn't open database '$db': $err"
+    exit 1
+}
+
+# Query and report various bits of database information
+set db [$io get_database]
+set nc [$db get_num_contigs]
+set ns 0
+set na 0
+set nb 0
+puts "Number of contigs:   $nc"
+
+for {set i 0} {$i < $nc} {incr i} {
+    set contig_rec [$io contig_order $i]
+    set c [$io get_contig $contig_rec]
+    incr ns [$c nseqs]
+    incr na [$c nanno]
+    incr nb [$c get_len]
+    $c delete
+}
+puts "Total contig length: $nb"
+puts "Number of sequences: $ns"
+puts "Numer of tags:       $na"
+
+# Close DB and exit.
+$io close
+exit 0
+__eof
