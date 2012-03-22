@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+BEGIN{
+	use Test::Most;
+	use_ok('SamStats');
+}
+
+my $sam_file='../t/tmp/test.0.sam';
+
+ok my $test_obj= SamStats -> new (sam => $sam_file), 'new object created';
+
+my $correct_stats=[12, 38094, 111425, 33];
+my $stats= $test_obj-> stats();
+
+is_deeply ($stats, $correct_stats, 'correct gap5-stats');
+
+done_testing;
+
+
