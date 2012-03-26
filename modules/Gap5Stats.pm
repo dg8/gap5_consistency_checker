@@ -7,29 +7,37 @@ package Gap5Stats;
 #Number of contigs:   12
 #Total contig length: 38094
 #Number of sequences: 111425
-#Numer of tags:       33
+#Number of tags:       33
 ##########################
 
 use Moose;
+use Stats;
 
 has 'gap5' => (is => 'ro', isa => 'Str', required =>1);
 my $db_info='/nfs/users/nfs_d/dg8/work_experience/gap5_overnight_check/db_info';
 
+my %names2keys = ('Number of contigs'   => 'n_contigs',
+		  'Total contig length' => 'total_length',
+		  'Number of sequences' => 'n_seqs',
+		  'Number of tags'      => 'n_tags',
+    );
+
+
 sub stats{
     my ($self)=@_;    
     my $db= $self->gap5;
-    my @stats;
-    my $i=0;
+    my $stats= Stats->new();
+
     my $output = `$db_info $db`;
-    #print "$output---------------\n";
     my @lines=split ('\n', $output);
+
     foreach my $line (@lines){
-	if ($line =~ /(\d+)/){
-	    $stats[$i++]= $1;
+	if ( $line =~ /(.+)\:\s+(\d+)/i ){
+	    my $stats_key = $names2keys{$1};
+	    $stats->$stats_key($2);
 	}
-#	    $i++;
     }
-    return \@stats;
+    return $stats;
 };
 
 

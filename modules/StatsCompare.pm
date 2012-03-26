@@ -1,32 +1,32 @@
 package StatsCompare;
 
 ######################
-#compares two given arrays,
+#compares two Stats objects,
 #gives 0 if they identical and
 #ref of array with positions where differences occur.
 #####################
 
 use Moose;
-use Array::Compare;
+use Stats;
 
-has 'stats1' => (is =>'ro', isa => 'Ref', required => 1);
-has 'stats2' => (is =>'ro', isa => 'Ref', required => 1);
+has 'stats1' => (is =>'ro', isa => 'Stats', required => 1);
+has 'stats2' => (is =>'ro', isa => 'Stats', required => 1);
 
-my $comp= Array::Compare->new;
+my @keys=('n_contigs', 'total_length', 'n_seqs', 'n_tags');
+
 
 sub compare{
     my ($self)=@_;
     my $stats1= $self -> stats1;
     my $stats2= $self -> stats2;
-    my $comp= Array::Compare->new;
+    my @full_comp=();
     
-    if ( $comp->compare($stats1,$stats2) ){
-	return 0;
-    }else{
-#	print "there is a problem\n";
-	my @full_comp= $comp->full_compare($stats1,$stats2);
-	return \@full_comp;
+    foreach my $key (@keys){
+	if ( $stats1->{$key} != $stats2->{$key} ){
+	    push @full_comp, $key;
+	}	
     }
+    return \@full_comp;
 }
 
 

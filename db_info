@@ -41,7 +41,7 @@ for {set i 0} {$i < $nc} {incr i} {
 }
 puts "Total contig length: $nb"
 puts "Number of sequences: $ns"
-puts "Numer of tags:       $na"
+puts "Number of tags:    $na"
 
 # Close DB and exit.
 $io close
