@@ -33,7 +33,8 @@ sub stats{
     my $stats= Stats->new();
     
     #finds n_contigs, total_lenght from header
-    open (my $sam_header, "samtools view -HS $sam |grep '^\@SQ' |");
+    open (my $sam_header, "samtools view -HS $sam |grep '^\@SQ' |")
+	or die "Could not open $sam";
     while (my $line= $csv->getline($sam_header)){
 	    $stats->n_contigs($stats->n_contigs+1);#$stats[0]++;
 	    foreach my $syl (@$line){ 
@@ -49,7 +50,8 @@ sub stats{
     chomp $output;
     $stats->n_seqs($output);
 
-    open (my $sam_reads, "samtools view -S $sam | grep -v 'sam\$' |");
+    open (my $sam_reads, "samtools view -S $sam | grep -v 'sam\$' |")
+	or die "Could not open $sam";
     while ( my $line= $csv->getline($sam_reads) ){
 	if ($line->[0] =~ /^\*/){
 	    $stats->n_tags($stats->n_tags+1);
