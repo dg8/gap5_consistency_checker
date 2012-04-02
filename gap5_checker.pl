@@ -10,7 +10,7 @@ gap5_checker.pl DBNAME.VERS
 
 =head1 DESCRIPTION
 
-This script takes in gap5 database and runs gap5_export and tg_index scripts on it. If stats of a new gap5 database are identical to the stats of the original one then the original database is rewritten by the new one.
+This script takes in gap5 database and runs gap5_export and tg_index scripts on it. If stats of a new gap5 database(tmp/DBNAME.X) are identical to the stats of the original one then the original database is rewritten by the new one.
 
 =head1 CONTACT
 
@@ -18,10 +18,6 @@ wormhelp@sanger.ac.uk
 
 =cut 
 
-
-BEGIN { unshift(@INC, 
-'/nfs/users/nfs_d/dg8/work_experience/gap5_overnight_check/modules') 
-} 
 use strict;
 use warnings;
 use Stats;

@@ -1,7 +1,7 @@
 package Gap5Stats;
 
 #########################
-#uses db_info script, written by jkb, to get 
+#uses 'db_info' script, written by jkb, to get 
 #basic information from gap5:
 #---------------------------
 #Number of contigs:   12
@@ -14,7 +14,6 @@ use Moose;
 use Stats;
 
 has 'gap5' => (is => 'ro', isa => 'Str', required =>1);
-my $db_info='/nfs/users/nfs_d/dg8/work_experience/gap5_overnight_check/db_info';
 
 my %names2keys = ('Number of contigs'   => 'n_contigs',
 		  'Total contig length' => 'total_length',
@@ -28,7 +27,7 @@ sub stats{
     my $db= $self->gap5;
     my $stats= Stats->new();
 
-    my $output = `$db_info $db`;
+    my $output = `db_info $db`; 
     my @lines=split ('\n', $output);
 
     foreach my $line (@lines){
