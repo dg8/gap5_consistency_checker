@@ -1,5 +1,20 @@
 package PrintOut;
 
+=head1 NAME
+
+PrintOut.pm
+
+=head1 DESCRIPTION
+
+prints error and output messages
+
+=head1 CONTACT
+
+wormhelp@sanger.ac.uk
+
+=cut
+
+
 use Moose;
 
 has 'comp_output'  => (is=>'ro', isa=>'Ref', required=>1); #comparison output

@@ -1,10 +1,18 @@
 package StatsCompare;
 
-######################
-#compares two Stats objects,
-#gives 0 if they identical and
-#ref of array with positions where differences occur.
-#####################
+=head1 NAME
+
+StatsCompare.pm
+
+=head1 DESCRIPTION
+
+compares two Stats objects, gives 0 if they identical and ref of array with positions where differences occur.
+
+=head1 CONTACT
+
+wormhelp@sanger.ac.uk
+
+=cut 
 
 use Moose;
 use Stats;

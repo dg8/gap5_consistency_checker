@@ -1,14 +1,18 @@
 package Gap5Stats;
 
-#########################
-#uses 'db_info' script, written by jkb, to get 
-#basic information from gap5:
-#---------------------------
-#Number of contigs:   12
-#Total contig length: 38094
-#Number of sequences: 111425
-#Number of tags:       33
-##########################
+=head1 NAME
+
+Gap5Stats.pm
+
+=head1 DESCRIPTION
+
+uses 'db_info' script, written by jkb, to get basic information from gap5: number of contigs, total contig length, number of sequences, number of tags
+
+=head1 CONTACT
+
+wormhelp@sanger.ac.uk
+
+=cut
 
 use Moose;
 use Stats;
