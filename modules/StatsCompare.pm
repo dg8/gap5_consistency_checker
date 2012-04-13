@@ -34,7 +34,17 @@ sub compare{
 	    push @full_comp, $key;
 	}	
     }
-    return \@full_comp;
+    
+    if (@full_comp){
+	my $compare_string;
+	foreach my $key (@full_comp){
+	    $compare_string .=sprintf("%10s%10d%15d\n-----------------------------------------\n", 
+				      "$key", "$stats1->{$key}", "$stats2->{$key}"); 
+	} 
+	return $compare_string;
+    }else{
+	return 0;
+    }
 }
 
 

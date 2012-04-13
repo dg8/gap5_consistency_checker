@@ -18,6 +18,10 @@ wormhelp@sanger.ac.uk
 
 =cut 
 
+BEGIN{
+    unshift(@INC, '/nfs/users/nfs_d/dg8/work_experience/gap5_consistency_checker/modules');
+}
+
 use strict;
 use warnings;
 use Stats;
@@ -47,7 +51,7 @@ print "Running 'gap5_export -format sam -out $sam_file $database.$version'\n";
 unless (system("gap5_export -format sam -out $sam_file $database.$version") ){
 
 ### STATS GATHERING #######
-my $sam_file_obj = SamStats-> new(sam => $sam_file);
+my $sam_file_obj = SamStats-> new(file_name => $sam_file);
 my $sam_stats = $sam_file_obj-> stats();
 
 my $gap5_original_obj = Gap5Stats-> new(gap5 => $gap5_original);
@@ -59,46 +63,41 @@ my $sam_vs_gap5_original_obj = StatsCompare->new(stats1 =>$sam_stats,
 						 stats2 =>$gap5_original_stats);
 my $sam_vs_gap5_original_comp = $sam_vs_gap5_original_obj -> compare();
 
-my $sam_print_out= PrintOut-> new (comp_output => $sam_vs_gap5_original_comp,
- 				  format => 'sam',
-				  file1 => $gap5_original,
-				  file2 => $sam_file,
-				  file1_stats => $gap5_original_stats,
-				  file2_stats => $sam_stats,);
-
-
-if ( $sam_print_out ->message() ){
-### SAM and GAP5 STATS are OK
-### creating a new gap5 database and comparing the stats
-    copy($gap5_new, $gap5_backup);
-    system("rm -f $gap5_new.g5d $gap5_new.g5x");
-    system("tg_index -o $gap5_new -s $sam_file") and 
-          die "Could not run 'tg_index' on $sam_file.";
-
-    my $gap5_new_obj = Gap5Stats-> new(gap5 => $gap5_new);
-    my $gap5_new_stats = $gap5_new_obj-> stats();
-
-    my $gap5_original_vs_new_obj = StatsCompare->new(
-                                     stats1 => $gap5_original_stats,
-				     stats2 => $gap5_new_stats);
-    my $gap5_original_vs_new_comp = $gap5_original_vs_new_obj -> compare();
-
-    
-    my $gap5_print_out= PrintOut-> new(comp_output => $gap5_original_vs_new_comp,
- 				  format => 'gap5',
-				  file1 => $gap5_original,
-				  file2 => $gap5_new,
-				  file1_stats => $gap5_original_stats,
-				  file2_stats => $gap5_new_stats,);
-
-    if ( $gap5_print_out-> message() ){
-         print "\t cpdb $gap5_new $gap5_original\n";
-            
-            # copy($gap5_new, $gap5_original);
-            # rm $sam_file;
-    }
+if ($sam_vs_gap5_original_comp){
+    print "The script stopped after running 'gap5_export'.\nThe stats of the original gap5 and sam file are different.\n";
+    print"\t\t $sam_file\t$gap5_original\n-----------------------------------------\n";
+    print $sam_vs_gap5_original_comp;
+    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
+}else{
+    print "The stats of gap5 and sam file are the same.\nContinue to work, running 'tg_index'.\n";
 }
 
+### SAM and GAP5 STATS are OK
+### creating a new gap5 database and comparing the stats
+copy($gap5_new, $gap5_backup);
+system("rm -f $gap5_new.g5d $gap5_new.g5x");
+system("tg_index -o $gap5_new -s $sam_file") and 
+    die "Could not run 'tg_index' on $sam_file.";
+
+my $gap5_new_obj = Gap5Stats-> new(gap5 => $gap5_new);
+my $gap5_new_stats = $gap5_new_obj-> stats();
+
+my $gap5_original_vs_new_obj = StatsCompare->new(
+                                stats1 => $gap5_original_stats,
+				stats2 => $gap5_new_stats);
+my $gap5_original_vs_new_comp = $gap5_original_vs_new_obj -> compare();
+
+if ($gap5_original_vs_new_comp){
+    print "The script stopped after running 'tg_index'.\nThe stats of the original gap5 and a new one are different.\n";
+    print"\t\t \t$gap5_original$gap5_new\n-----------------------------------------\n";
+    print $gap5_original_vs_new_comp;
+    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
+}else{
+  print "The stats of the original gap5 and a new one are the same.\nYou can copy a new version into your original one, using the following command:\n";
+  print "\t cpdb $gap5_new $gap5_original\n"; 
+  # copy($gap5_new, $gap5_original);
+  # rm $sam_file;
+}   
 }
 
 

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 BEGIN{
-    unshift(@INC, '/nfs/users/nfs_d/dg8/work_experience/gap5_overnight_check/modules');
+    unshift(@INC, '/nfs/users/nfs_d/dg8/work_experience/gap5_consistency_checker/modules');
 	use Test::Most;
 	use_ok('SamStats');
 	use_ok('Stats');
@@ -13,7 +13,7 @@ BEGIN{
 my $sam_file='test.sam';
 #    '/nfs/repository/working_area/fSY21A24/tmp/fSY21A24.D.sam';
 
-ok my $test_obj= SamStats -> new (sam => $sam_file), 'SamStats object created';
+ok my $test_obj= SamStats -> new (file_name => $sam_file), 'SamStats object created';
 
 ok my $correct_stats_obj=Stats -> new(n_contigs    => 12, 
 				      total_length => 37894, 

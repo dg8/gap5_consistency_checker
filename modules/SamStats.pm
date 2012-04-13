@@ -19,30 +19,21 @@ use Moose;
 use Text::CSV;
 use Stats;
 
-has 'sam'   => (is => 'ro', isa => 'Str', required =>1);
-has '_input_fh'  => (is=>'ro', lazy_build=>1);
-
-sub _build__input_fh {
-    my ($self)=@_;
-    my $csv = Text::CSV-> new ({binary   =>1, 
-				sep_char => "\t", 
-			})
-    or die "Cannot use CSV: ".Text::CSV->error_diag();
-    return $csv;
-}
+has 'file_name'   => (is => 'ro', isa => 'Str', required =>1);
 
 sub stats{
     my ($self)=@_;
-    my $sam= $self->sam;
-    my $csv = $self->_input_fh;
+    my $sam= $self->file_name;
     my $stats= Stats->new();
     
-    #finds n_contigs, total_lenght from header
+### finds n_contigs, total_lenght from header
     open (my $sam_header, "samtools view -HS $sam |grep '^\@SQ' |")
 	or die "Could not open $sam";
-    while (my $line= $csv->getline($sam_header)){
+    while (my $lane= <$sam_header>){
+	chomp $lane;
+	my $rows= [ split(/\t/, $lane) ];
 	    $stats->n_contigs($stats->n_contigs+1);#$stats[0]++;
-	    foreach my $syl (@$line){ 
+	    foreach my $syl (@$rows){ 
 		if ($syl =~ /LN\:(\d+)/){
 		    $stats->total_length($stats->total_length+$1);
 		}
@@ -50,27 +41,32 @@ sub stats{
     }
     close $sam_header;
 
-    #finds n_seqs and n_tags from sequence information
+### finds n_seqs from sequence information
     my $output = `samtools view -S $sam | grep -vc '^\*' `;
     chomp $output;
     $stats->n_seqs($output);
 
-    open (my $sam_reads, "samtools view -S $sam | grep -v 'sam\$' |")
+### finds n_tags from sequence information
+    open (my $sam_reads, "samtools view -S $sam | grep -v '.sam\$' |")
 	or die "Could not open $sam";
-    while ( my $line= $csv->getline($sam_reads) ){
-	if ($line->[0] =~ /^\*/){
-	    $stats->n_tags($stats->n_tags+1);
-	}
-	if (@$line>11){
-	    for (my $i=11; $i<@$line; $i++){
-		if ($line ->[$i] =~ /^PT\:Z/ ){
-			my @count= split (/\|/, $line->[$i]);
-			$stats->n_tags($stats->n_tags+scalar @count);	
+
+     while ( my $lane= <$sam_reads> ){
+     chomp $lane;
+     my $rows = [ split(/\t/, $lane) ];
+
+ 	if ($rows->[0] eq '*') {
+ 	    $stats->n_tags($stats->n_tags +1);
+ 	}
+
+	for (my $i=11; $i<@$rows; $i++){
+		if ($rows ->[$i] =~ /^PT\:Z/ ){
+			my @count= split (/\|/, $rows->[$i]);
+			$stats->n_tags($stats->n_tags + @count);	
 		}
-	    }
 	}
     }
-    close $sam_reads;
+
+     close $sam_reads;
     
     return $stats;
 }
