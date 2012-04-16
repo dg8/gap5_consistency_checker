@@ -18,9 +18,6 @@ wormhelp@sanger.ac.uk
 
 =cut 
 
-BEGIN{
-    unshift(@INC, '/nfs/users/nfs_d/dg8/work_experience/gap5_consistency_checker/modules');
-}
 
 use strict;
 use warnings;
@@ -28,7 +25,6 @@ use Stats;
 use SamStats;
 use Gap5Stats;
 use StatsCompare;
-use PrintOut;
 
 unless (@ARGV){
    die "Usage: $0 DBNAME.VERS\n" ;

@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 BEGIN{
-    unshift(@INC, '/nfs/users/nfs_d/dg8/work_experience/gap5_consistency_checker/modules');
         use Test::Most;
 	use_ok('StatsCompare');
 	use_ok('Stats');

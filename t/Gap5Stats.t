@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 BEGIN{
-    unshift(@INC, '/nfs/users/nfs_d/dg8/work_experience/gap5_overnight_check/modules');
 	use Test::Most;
 	use_ok('Gap5Stats');
 	use_ok('Stats');
