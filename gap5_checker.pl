@@ -43,8 +43,8 @@ my $gap5_new = "$tmp_folder/$database\.X";
 #my $gap5_new = "$tmp_folder/$database\.$output_version";
 my $gap5_backup = "$tmp_folder/$database\.Z";
 
-print "Running 'gap5_export -format sam -out $sam_file $database.$version'\n";
-unless (system("gap5_export -format sam -out $sam_file $database.$version") ){
+print "Running 'gap5_export -test -format sam -out $sam_file $database.$version'\n";
+unless (system("gap5_export -test -format sam -out $sam_file $database.$version") ){
 
 ### STATS GATHERING #######
 my $sam_file_obj = SamStats-> new(file_name => $sam_file);
