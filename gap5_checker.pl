@@ -63,10 +63,12 @@ if ($sam_vs_gap5_original_comp){
     print "The script stopped after running 'gap5_export'.\nThe stats of the original gap5 and sam file are different.\n";
     print"\t\t $sam_file\t$gap5_original\n-----------------------------------------\n";
     print $sam_vs_gap5_original_comp;
-    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
+#    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
 }else{
-    print "The stats of gap5 and sam file are the same.\nContinue to work, running 'tg_index'.\n";
+    print "The stats of gap5 and sam file are the same.\n"
 }
+print "Continue to work, running 'tg_index'.\n";
+
 
 ### SAM and GAP5 STATS are OK
 ### creating a new gap5 database and comparing the stats
