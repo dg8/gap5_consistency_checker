@@ -55,13 +55,14 @@ my $gap5_original_stats = $gap5_original_obj -> stats();
 
 
 ### STATS COMPARISON (#contigs, total lenght, #sequences, #tags)
-my $sam_vs_gap5_original_obj = StatsCompare->new(stats1 =>$sam_stats,
-						 stats2 =>$gap5_original_stats);
+my $sam_vs_gap5_original_obj = StatsCompare->new(stats2 =>$sam_stats,
+						 stats1 =>$gap5_original_stats);
 my $sam_vs_gap5_original_comp = $sam_vs_gap5_original_obj -> compare();
 
 if ($sam_vs_gap5_original_comp){
-    print "The script stopped after running 'gap5_export'.\nThe stats of the original gap5 and sam file are different.\n";
-    print"\t\t $sam_file\t$gap5_original\n-----------------------------------------\n";
+   # print "The script stopped after running 'gap5_export'.\n";
+    print "The stats of the original gap5 and sam file are different.\n";
+    print"\t$gap5_original\t\t$sam_file\n-----------------------------------------\n";
     print $sam_vs_gap5_original_comp;
 #    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
 }else{
@@ -87,9 +88,12 @@ my $gap5_original_vs_new_comp = $gap5_original_vs_new_obj -> compare();
 
 if ($gap5_original_vs_new_comp){
     print "The script stopped after running 'tg_index'.\nThe stats of the original gap5 and a new one are different.\n";
-    print"\t\t \t$gap5_original$gap5_new\n-----------------------------------------\n";
+    print"\t\t$gap5_original\t$gap5_new\n-----------------------------------------\n";
     print $gap5_original_vs_new_comp;
-    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
+    print "If you are happy with a given output\nyou can copy the new version into your original database,\nusing the following command:\n";
+  print "\n cpdb $gap5_new $gap5_original\n\n"; 
+
+#    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
 }else{
   print "The stats of the original gap5 and a new one are the same.\nYou can copy a new version into your original one, using the following command:\n";
   print "\t cpdb $gap5_new $gap5_original\n"; 

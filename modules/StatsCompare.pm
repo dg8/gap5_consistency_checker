@@ -6,7 +6,7 @@ StatsCompare.pm
 
 =head1 DESCRIPTION
 
-compares two Stats objects, gives 0 if they identical and ref of array with positions where differences occur.
+compares two Stats objects, gives 0 if they identical or string with differences if stats differ
 
 =head1 CONTACT
 
@@ -41,7 +41,7 @@ sub compare{
 	    $compare_string .=sprintf("%10s%10d%15d\n-----------------------------------------\n", 
 				      "$key", "$stats1->{$key}", "$stats2->{$key}"); 
 	} 
-	return $compare_string;
+	return [$compare_string, \@full_comp];
     }else{
 	return 0;
     }
