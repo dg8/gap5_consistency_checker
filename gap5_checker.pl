@@ -103,10 +103,13 @@ if ($gap5_original_vs_new_comp){
 }
 
 
+
 sub copy{
     my ($copy, $create)=@_;
+    if (-f $create.'.g5d'){
     system("rm -f $create.g5d $create.g5x");
-    if (-f $copy){
+    }
+    if (-f $copy.'.g5d'){
 	system("cpdb $copy $create");
     }
 }
