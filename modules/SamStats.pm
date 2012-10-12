@@ -18,6 +18,8 @@ wormhelp@sanger.ac.uk
 use Moose;
 use Text::CSV;
 use Stats;
+use Bio::DB::Sam;
+
 
 has 'file_name'   => (is => 'ro', isa => 'Str', required =>1);
 
@@ -25,7 +27,21 @@ sub stats{
     my ($self)=@_;
     my $sam= $self->file_name;
     my $stats= Stats->new();
-    
+    my $bam = $sam.'.bam';
+    `samtools view -hb -S $sam > $bam`;
+    my $sam_obj = Bio::DB::Sam->new(-bam => $bam);
+    my $header = $sam_obj->header;
+    my $num_targets = $sam_obj->n_targets;
+    print "number of contigs: $num_targets\n";
+    my @seq_ids = $sam_obj->seq_ids;
+    my $length=0;
+    foreach my $seqid (@seq_ids){
+	$length +=$sam_obj->length($seqid);
+    }
+    print "total length: $length\n";
+
+
+
 ### finds n_contigs, total_lenght from header
     open (my $sam_header, "samtools view -HS $sam |grep '^\@SQ' |")
 	or die "Could not open $sam";
@@ -40,7 +56,11 @@ sub stats{
 	    }
     }
     close $sam_header;
+    
 
+
+
+if (0){
 ### finds n_seqs from sequence information
     my $output = `samtools view -S $sam | grep -vc '^\*' `;
     chomp $output;
@@ -67,7 +87,7 @@ sub stats{
     }
 
      close $sam_reads;
-    
+}    
     return $stats;
 }
 

@@ -25,10 +25,13 @@ use Stats;
 use SamStats;
 use Gap5Stats;
 use StatsCompare;
+use Data::Dumper;
 
 unless (@ARGV){
    die "Usage: $0 DBNAME.VERS\n" ;
 }
+
+my $stdout_of_program =  "> /dev/null 2>&1";
 
 my @input =split (/\./, shift @ARGV);
 my $version = pop @input;
@@ -42,9 +45,10 @@ my $gap5_original ="$database\.$version";
 my $gap5_new = "$tmp_folder/$database\.X";
 #my $gap5_new = "$tmp_folder/$database\.$output_version";
 my $gap5_backup = "$tmp_folder/$database\.Z";
+my $errors_output_file = "$tmp_folder/$database\.X.errors";
 
 print "Running 'gap5_export -test -format sam -out $sam_file $database.$version'\n";
-unless (system("gap5_export -test -format sam -out $sam_file $database.$version") ){
+unless (system("gap5_export -test -format sam -out $sam_file $database.$version $stdout_of_program") ){
 
 ### STATS GATHERING #######
 my $sam_file_obj = SamStats-> new(file_name => $sam_file);
@@ -68,14 +72,15 @@ if ($sam_vs_gap5_original_comp){
 }else{
     print "The stats of gap5 and sam file are the same.\n"
 }
-print "Continue to work, running 'tg_index'.\n";
 
 
 ### SAM and GAP5 STATS are OK
 ### creating a new gap5 database and comparing the stats
 copy($gap5_new, $gap5_backup);
 system("rm -f $gap5_new.g5d $gap5_new.g5x");
-system("tg_index -o $gap5_new -s $sam_file") and 
+
+print "Continue to work, running 'tg_index'\n";
+system("tg_index -o $gap5_new -s $sam_file $stdout_of_program") and 
     die "Could not run 'tg_index' on $sam_file.";
 
 my $gap5_new_obj = Gap5Stats-> new(gap5 => $gap5_new);
@@ -100,6 +105,9 @@ if ($gap5_original_vs_new_comp){
   # copy($gap5_new, $gap5_original);
   # rm $sam_file;
 }   
+
+print gap_check_command($gap5_new, $errors_output_file);
+
 }
 
 
@@ -111,5 +119,48 @@ sub copy{
     }
     if (-f $copy.'.g5d'){
 	system("cpdb $copy $create");
+    }
+}
+
+sub gap_check_command{
+    my ($db, $output_file) = @_;
+
+    my $gap5_check_output = `gap5_check $db`;
+
+
+    my @check_lines = split (/\n/, $gap5_check_output);
+    
+    my $total_errors_line = pop @check_lines;
+    my $total_errors;
+    if ($total_errors_line =~ /(\d+)\s\*\*\*/){
+	$total_errors = $1;
+    }
+    
+    my $current_contig = '';
+    my %errors_by_contigs;
+    foreach my $line (@check_lines){
+	if (!$line){next};
+	if ($line =~ /^--Checking contig (\#\d+)/){
+	    $current_contig= $1;
+	}
+	if ( $line !~ /^--/  and $current_contig){
+	    $errors_by_contigs{$current_contig} .= "$line\n";
+	}
+    }
+    print Dumper %errors_by_contigs;
+
+    if ($total_errors and %errors_by_contigs ){
+	open FH, ">$output_file";
+	print FH $total_errors_line."\n";
+	foreach my $contig (keys %errors_by_contigs){
+	    print FH "--Checking contig $contig\n";
+	    print FH $errors_by_contigs{$contig};
+	}
+	close FH;
+	
+	return "There ". ($total_errors==1? 'is':'are') ." $total_errors error". ($total_errors==1? '':'s') ." found.\nPlease check $output_file for the disctription of the errors.\n";
+    }elsif ( $total_errors==1 or $total_errors==0 ){
+	
+	return  "No errors were found after running gap5_check $db.\n";
     }
 }
