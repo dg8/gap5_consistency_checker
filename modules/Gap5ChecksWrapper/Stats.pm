@@ -1,4 +1,4 @@
-package Stats;
+package Gap5ChecksWrapper::Stats;
 
 use Moose;
 

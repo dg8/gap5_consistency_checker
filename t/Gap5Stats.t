@@ -4,15 +4,15 @@ use strict;
 use warnings;
 BEGIN{
 	use Test::Most;
-	use_ok('Gap5Stats');
-	use_ok('Stats');
+	use_ok('Gap5ChecksWrapper::Gap5Stats');
+	use_ok('Gap5ChecksWrapper::Stats');
 }
 
-my $gap5='test.0';
+my $gap5='./t/test.0';
 
-ok my $test_obj= Gap5Stats -> new (gap5 => $gap5), 'Gap5Stats object created';
+ok my $test_obj= Gap5ChecksWrapper::Gap5Stats -> new (gap5 => $gap5), 'Gap5Stats object created';
 
-ok my $correct_stats_obj=Stats -> new(n_contigs    => 12, 
+ok my $correct_stats_obj = Gap5ChecksWrapper::Stats -> new(n_contigs    => 12, 
 				   total_length => 37894, 
 				   n_seqs       => 111425, 
 				   n_tags       => 27), 'Stats object created';

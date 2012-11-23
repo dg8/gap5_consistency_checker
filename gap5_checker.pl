@@ -21,11 +21,11 @@ wormhelp@sanger.ac.uk
 
 use strict;
 use warnings;
-use Stats;
-use SamStats;
-use Gap5Stats;
-use StatsCompare;
-use Data::Dumper;
+use Gap5ChecksWrapper::Stats;
+use Gap5ChecksWrapper::SamStats;
+use Gap5ChecksWrapper::Gap5Stats;
+use Gap5ChecksWrapper::StatsCompare;
+#use Data::Dumper;
 
 unless (@ARGV){
    die "Usage: $0 DBNAME.VERS\n" ;
@@ -51,15 +51,15 @@ print "Running 'gap5_export -test -format sam -out $sam_file $database.$version'
 unless (system("gap5_export -test -format sam -out $sam_file $database.$version $stdout_of_program") ){
 
 ### STATS GATHERING #######
-my $sam_file_obj = SamStats-> new(file_name => $sam_file);
+my $sam_file_obj = Gap5ChecksWrapper::SamStats-> new(file_name => $sam_file);
 my $sam_stats = $sam_file_obj-> stats();
 
-my $gap5_original_obj = Gap5Stats-> new(gap5 => $gap5_original);
+my $gap5_original_obj = Gap5ChecksWrapper::Gap5Stats-> new(gap5 => $gap5_original);
 my $gap5_original_stats = $gap5_original_obj -> stats();
 
 
 ### STATS COMPARISON (#contigs, total lenght, #sequences, #tags)
-my $sam_vs_gap5_original_obj = StatsCompare->new(stats2 =>$sam_stats,
+my $sam_vs_gap5_original_obj = Gap5ChecksWrapper::StatsCompare->new(stats2 =>$sam_stats,
 						 stats1 =>$gap5_original_stats);
 my $sam_vs_gap5_original_comp = $sam_vs_gap5_original_obj -> compare();
 
@@ -83,10 +83,10 @@ print "Continue to work, running 'tg_index'\n";
 system("tg_index -o $gap5_new -s $sam_file $stdout_of_program") and 
     die "Could not run 'tg_index' on $sam_file.";
 
-my $gap5_new_obj = Gap5Stats-> new(gap5 => $gap5_new);
+my $gap5_new_obj = Gap5ChecksWrapper::Gap5Stats-> new(gap5 => $gap5_new);
 my $gap5_new_stats = $gap5_new_obj-> stats();
 
-my $gap5_original_vs_new_obj = StatsCompare->new(
+my $gap5_original_vs_new_obj = Gap5ChecksWrapper::StatsCompare->new(
                                 stats1 => $gap5_original_stats,
 				stats2 => $gap5_new_stats);
 my $gap5_original_vs_new_comp = $gap5_original_vs_new_obj -> compare();
@@ -147,7 +147,6 @@ sub gap_check_command{
 	    $errors_by_contigs{$current_contig} .= "$line\n";
 	}
     }
-    print Dumper %errors_by_contigs;
 
     if ($total_errors and %errors_by_contigs ){
 	open FH, ">$output_file";

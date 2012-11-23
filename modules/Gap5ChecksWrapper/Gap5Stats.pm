@@ -1,8 +1,8 @@
-package Gap5Stats;
+package Gap5ChecksWrapper::Gap5Stats;
 
 =head1 NAME
 
-Gap5Stats.pm
+Gap5ChecksWrapper/Gap5Stats.pm
 
 =head1 DESCRIPTION
 
@@ -15,7 +15,7 @@ wormhelp@sanger.ac.uk
 =cut
 
 use Moose;
-use Stats;
+use Gap5ChecksWrapper::Stats;
 
 has 'gap5' => (is => 'ro', isa => 'Str', required =>1);
 
@@ -29,7 +29,7 @@ my %names2keys = ('Number of contigs'   => 'n_contigs',
 sub stats{
     my ($self)=@_;    
     my $db= $self->gap5;
-    my $stats= Stats->new();
+    my $stats= Gap5ChecksWrapper::Stats->new();
 
     my $output = `db_info $db`; 
     my @lines=split ('\n', $output);

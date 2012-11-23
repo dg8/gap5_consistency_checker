@@ -1,8 +1,9 @@
-package SamStats;
+
+package Gap5ChecksWrapper::SamStats;
 
 =head1 NAME
 
-SamStats.pm
+Gap5ChecksWrapper/SamStats.pm
 
 =head1 DESCRIPTION
 
@@ -17,7 +18,7 @@ wormhelp@sanger.ac.uk
 
 use Moose;
 use Text::CSV;
-use Stats;
+use Gap5ChecksWrapper::Stats;
 use Bio::DB::Sam;
 
 
@@ -25,8 +26,9 @@ has 'file_name'   => (is => 'ro', isa => 'Str', required =>1);
 
 sub stats{
     my ($self)=@_;
+
     my $sam= $self->file_name;
-    my $stats= Stats->new();
+    my $stats= Gap5ChecksWrapper::Stats->new();
     my $bam = $sam.'.bam';
     `samtools view -hb -S $sam > $bam`;
     my $sam_obj = Bio::DB::Sam->new(-bam => $bam);

@@ -1,8 +1,8 @@
-package StatsCompare;
+package Gap5ChecksWrapper::StatsCompare;
 
 =head1 NAME
 
-StatsCompare.pm
+Gap5ChecksWrapper/StatsCompare.pm
 
 =head1 DESCRIPTION
 
@@ -15,10 +15,10 @@ wormhelp@sanger.ac.uk
 =cut 
 
 use Moose;
-use Stats;
+use Gap5ChecksWrapper::Stats;
 
-has 'stats1' => (is =>'ro', isa => 'Stats', required => 1);
-has 'stats2' => (is =>'ro', isa => 'Stats', required => 1);
+has 'stats1' => (is =>'ro', isa => 'Gap5ChecksWrapper::Stats', required => 1);
+has 'stats2' => (is =>'ro', isa => 'Gap5ChecksWrapper::Stats', required => 1);
 
 my @keys=('n_contigs', 'total_length', 'n_seqs', 'n_tags');
 
