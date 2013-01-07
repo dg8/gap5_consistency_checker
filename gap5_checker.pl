@@ -79,9 +79,9 @@ if ($sam_vs_gap5_original_comp){
 copy($gap5_new, $gap5_backup);
 system("rm -f $gap5_new.g5d $gap5_new.g5x");
 
-print "Continue to work, running 'tg_index'\n";
-system("tg_index -o $gap5_new -s $sam_file $stdout_of_program") and 
-    die "Could not run 'tg_index' on $sam_file.";
+print "Continue to work, running 'tg_index -test'\n";
+system("tg_index -test  -o $gap5_new -s $sam_file $stdout_of_program") and 
+    die "Could not run 'tg_index -test' on $sam_file.";
 
 my $gap5_new_obj = Gap5ChecksWrapper::Gap5Stats-> new(gap5 => $gap5_new);
 my $gap5_new_stats = $gap5_new_obj-> stats();
@@ -92,7 +92,7 @@ my $gap5_original_vs_new_obj = Gap5ChecksWrapper::StatsCompare->new(
 my $gap5_original_vs_new_comp = $gap5_original_vs_new_obj -> compare();
 
 if ($gap5_original_vs_new_comp){
-    print "The script stopped after running 'tg_index'.\nThe stats of the original gap5 and a new one are different.\n";
+    print "The script stopped after running 'tg_index -test'.\nThe stats of the original gap5 and a new one are different.\n";
     print"\t\t$gap5_original\t$gap5_new\n-----------------------------------------\n";
     print $gap5_original_vs_new_comp;
     print "If you are happy with a given output\nyou can copy the new version into your original database,\nusing the following command:\n";
