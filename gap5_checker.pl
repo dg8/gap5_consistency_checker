@@ -47,10 +47,11 @@ my $gap5_new = "$tmp_folder/$database\.X";
 my $gap5_backup = "$tmp_folder/$database\.Z";
 my $errors_output_file = "$tmp_folder/$database\.X.errors";
 
-#print "Running 'gap5_export -test -format sam -out $sam_file $database.$version'\n";
-#unless (system("gap5_export -test -format sam -out $sam_file $database.$version $stdout_of_program") ){
-print "Running 'gap5_export  -format sam -out $sam_file $database.$version'\n";
-unless (system("gap5_export  -format sam -out $sam_file $database.$version $stdout_of_program") ){
+#print "Running 'gap5_export -format sam -out $sam_file $database.$version'\n";
+#unless (system("gap5_export -format sam -out $sam_file $database.$version $stdout_of_program") ){
+my $export_cmd = "gap5_cmd -test export  -format sam -out $sam_file $database.$version $stdout_of_program";
+print "Running '$export_cmd'\n";
+unless (system("$export_cmd") ){
 
 
 ### STATS GATHERING #######
@@ -111,6 +112,8 @@ if ($gap5_original_vs_new_comp){
 
 print gap_check_command($gap5_new, $errors_output_file);
 
+}else{
+    print "Couldn't run '$export_cmd' properly\n";
 }
 
 
@@ -128,7 +131,7 @@ sub copy{
 sub gap_check_command{
     my ($db, $output_file) = @_;
 
-    my $gap5_check_output = `gap5_check $db`;
+    my $gap5_check_output = `gap5_cmd -test check $db`;
 
 
     my @check_lines = split (/\n/, $gap5_check_output);
