@@ -47,8 +47,11 @@ my $gap5_new = "$tmp_folder/$database\.X";
 my $gap5_backup = "$tmp_folder/$database\.Z";
 my $errors_output_file = "$tmp_folder/$database\.X.errors";
 
-print "Running 'gap5_export -test -format sam -out $sam_file $database.$version'\n";
-unless (system("gap5_export -test -format sam -out $sam_file $database.$version $stdout_of_program") ){
+#print "Running 'gap5_export -test -format sam -out $sam_file $database.$version'\n";
+#unless (system("gap5_export -test -format sam -out $sam_file $database.$version $stdout_of_program") ){
+print "Running 'gap5_export  -format sam -out $sam_file $database.$version'\n";
+unless (system("gap5_export  -format sam -out $sam_file $database.$version $stdout_of_program") ){
+
 
 ### STATS GATHERING #######
 my $sam_file_obj = Gap5ChecksWrapper::SamStats-> new(file_name => $sam_file);
