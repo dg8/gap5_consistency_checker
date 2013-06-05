@@ -62,7 +62,7 @@ sub stats{
 
 
 
-if (0){
+#if (0){
 ### finds n_seqs from sequence information
     my $output = `samtools view -S $sam | grep -vc '^\*' `;
     chomp $output;
@@ -89,7 +89,7 @@ if (0){
     }
 
      close $sam_reads;
-}    
+#}    
     return $stats;
 }
 
