@@ -15,9 +15,9 @@ my $sam_file='./t/test.sam';
 ok my $test_obj= Gap5ChecksWrapper::SamStats -> new (file_name => $sam_file), 'SamStats object created';
 
 ok my $correct_stats_obj = Gap5ChecksWrapper::Stats -> new(n_contigs    => 12, 
-				      total_length => 37894, 
-				     # n_seqs       => 111425, 
-				     # n_tags       => 27
+				     total_length => 37894, 
+				     n_seqs       => 111425, 
+				     n_tags       => 27
     ), 
     'Stats object created';
 
