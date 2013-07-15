@@ -40,23 +40,23 @@ print "The script is going to work on database '$database' and verison '$version
 
 my $tmp_folder='tmp';
 mkdir $tmp_folder unless -d $tmp_folder;
-my $sam_file = "$tmp_folder/$database\.$version\.sam";
+my $bam_file = "$tmp_folder/$database\.$version\.bam";
 my $gap5_original ="$database\.$version";
 my $gap5_new = "$tmp_folder/$database\.X";
 #my $gap5_new = "$tmp_folder/$database\.$output_version";
 my $gap5_backup = "$tmp_folder/$database\.Z";
 my $errors_output_file = "$tmp_folder/$database\.X.errors";
 
-#print "Running 'gap5_export -format sam -out $sam_file $database.$version'\n";
-#unless (system("gap5_export -format sam -out $sam_file $database.$version $stdout_of_program") ){
-my $export_cmd = "gap5_cmd -test export  -format sam -out $sam_file $database.$version $stdout_of_program";
+#print "Running 'gap5_export -format bam -out $bam_file $database.$version'\n";
+#unless (system("gap5_export -format bam -out $bam_file $database.$version $stdout_of_program") ){
+my $export_cmd = "gap5_cmd -test export  -format bam -out $bam_file $database.$version $stdout_of_program";
 print "Running '$export_cmd'\n";
 unless (system("$export_cmd") ){
 
 
 ### STATS GATHERING #######
-my $sam_file_obj = Gap5ChecksWrapper::SamStats-> new(file_name => $sam_file);
-my $sam_stats = $sam_file_obj-> stats();
+my $bam_file_obj = Gap5ChecksWrapper::SamStats-> new(bam_name => $bam_file);
+my $sam_stats = $bam_file_obj-> stats();
 
 my $gap5_original_obj = Gap5ChecksWrapper::Gap5Stats-> new(gap5 => $gap5_original);
 my $gap5_original_stats = $gap5_original_obj -> stats();
@@ -70,7 +70,7 @@ my $sam_vs_gap5_original_comp = $sam_vs_gap5_original_obj -> compare();
 if ($sam_vs_gap5_original_comp){
    # print "The script stopped after running 'gap5_export'.\n";
     print "The stats of the original gap5 and sam file are different.\n";
-    print"\t$gap5_original\t\t$sam_file\n-----------------------------------------\n";
+    print"\t$gap5_original\t\t$bam_file\n-----------------------------------------\n";
     print $sam_vs_gap5_original_comp;
 #    die "Please contact wormhelp\@sanger.ac.uk or jkb\@sanger.ac.uk\n";
 }else{
@@ -84,8 +84,8 @@ copy($gap5_new, $gap5_backup);
 system("rm -f $gap5_new.g5d $gap5_new.g5x");
 
 print "Continue to work, running 'tg_index -test'\n";
-system("tg_index -test  -o $gap5_new -s $sam_file $stdout_of_program") and 
-    die "Could not run 'tg_index -test' on $sam_file.";
+system("tg_index -test  -o $gap5_new -s $bam_file $stdout_of_program") and 
+    die "Could not run 'tg_index -test' on $bam_file.";
 
 my $gap5_new_obj = Gap5ChecksWrapper::Gap5Stats-> new(gap5 => $gap5_new);
 my $gap5_new_stats = $gap5_new_obj-> stats();
@@ -107,7 +107,7 @@ if ($gap5_original_vs_new_comp){
   print "The stats of the original gap5 and a new one are the same.\nYou can copy a new version into your original one, using the following command:\n";
   print "\t cpdb $gap5_new $gap5_original\n"; 
   # copy($gap5_new, $gap5_original);
-  # rm $sam_file;
+  # rm $bam_file;
 }   
 
 print gap_check_command($gap5_new, $errors_output_file);
